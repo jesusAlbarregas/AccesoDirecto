@@ -4,51 +4,39 @@
     Author     : Jesus
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="es.albarregas.beans.Ave, java.util.ArrayList" %>
+<jsp:directive.page contentType="text/html" pageEncoding="UTF-8"/>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
-<html>
+<html lang="es">
     <head>
+        <title>Aviso</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <jsp:include page="../INC/metas.inc"/>
         <title>Avistamientos</title>
+        <link rel="stylesheet" type="text/css" href="${estilo}" />
     </head>
-    <%
-        ArrayList<Ave> aves = (ArrayList<Ave>) request.getAttribute("aves");
-    %>
-    <body>
-        <h1>Datos de los avistamientos</h1>
-        <table>
 
-            <%
-                if (!aves.isEmpty()) {
-            %>
-            <tr>
+    <body>
+        <div id="principal">
+            <h1>Datos de los avistamientos</h1>
+            <table>
+                <tr>
                 <th>Anilla</th>
                 <th>Especie</th>
                 <th>Lugar</th>
                 <th>Fecha</th>
             </tr>
-            <%
-                for (Ave ave : aves) {
-            %>
+            <c:forEach var="ave" items="${aves}">
             <tr>
-                <td><%=ave.getAnilla()%></td>
-                <td><%=ave.getEspecie()%></td>
-                <td><%=ave.getLugar()%></td>
-                <td><%=ave.getFecha()%></td>
+                <td><c:out value="${ave.anilla}" /></td>
+                <td><c:out value="${ave.especie}" /></td>
+                <td><c:out value="${ave.lugar}" /></td>
+                <td><c:out value="${ave.fecha}" /></td>
             </tr>
-            <%
-                }
-            } else {
-            %>
-            <tr>
-                <td colspan="4">No existen avistamientos que visualizar</td>
-            </tr>
-            <%
-                }
-            %>
-        </table>
-
-        <p><a href="<%=request.getContextPath()%>/AccesoBD">Volver</a></p>
+            </c:forEach>
+                
+            </table>
+            <p class="volver"><a href="${contexto}/AccesoBD">Volver</a></p>
+        </div>
     </body>
 </html>

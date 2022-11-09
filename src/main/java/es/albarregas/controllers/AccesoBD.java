@@ -34,12 +34,13 @@ public class AccesoBD extends HttpServlet {
     @Override
     public void init(ServletConfig config) {
         try {
-                Class.forName("com.mysql.jdbc.Driver");
-            } catch (ClassNotFoundException ex) {
-                System.out.println("No existe el driver");
-            }
-        
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (ClassNotFoundException ex) {
+            System.out.println("No existe el driver");
+        }
+
     }
+
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -75,118 +76,116 @@ public class AccesoBD extends HttpServlet {
             List<Ave> aves = null;
 
             String cadenaConexion = "jdbc:mysql://localhost:3306/pruebasJAVA";
-            conexion = DriverManager.getConnection(cadenaConexion, "java2021", "2021");
+            conexion = DriverManager.getConnection(cadenaConexion, "java2023", "2023");
             String anilla = request.getParameter("anilla");
 
             String sql = null;
+            String boton = request.getParameter("boton");
 
-            
-            if (request.getParameter("una") != null) {
-                if (anilla != null) {
-                    
-                    sql = "SELECT * FROM aves WHERE anilla = ?";
-                    preparada = conexion.prepareStatement(sql);
-                    preparada.setString(1, anilla);
-                    try {
-                        resultado = preparada.executeQuery();
-                        resultado.next();
-                        ave = new Ave();
-                        ave.setAnilla(resultado.getString("anilla"));
-                        ave.setEspecie(resultado.getString(2));
-                        ave.setLugar(resultado.getString("lugar"));
-                        ave.setFecha(resultado.getString("fecha"));
-                        request.setAttribute("una", ave);
-                        url = "JSP/unRegistro.jsp";
-                    } catch (SQLException e) {
-                        
-                        request.setAttribute("aviso", "La anilla " + anilla + " no se encuentra en la base de datos");
-                        url = "JSP/aviso.jsp";
-                    } finally {
-                        if (resultado != null) {
-                            resultado.close();
+            switch (boton) {
+                case "Anilla":
+                    if (anilla != null) {
+
+                        sql = "SELECT * FROM aves WHERE anilla = ?";
+                        preparada = conexion.prepareStatement(sql);
+                        preparada.setString(1, anilla);
+                        try {
+                            resultado = preparada.executeQuery();
+                            resultado.next();
+                            ave = new Ave();
+                            ave.setAnilla(resultado.getString("anilla"));
+                            ave.setEspecie(resultado.getString(2));
+                            ave.setLugar(resultado.getString("lugar"));
+                            ave.setFecha(resultado.getString("fecha"));
+                            request.setAttribute("ave", ave);
+                            url = "JSP/unRegistro.jsp";
+                        } catch (SQLException e) {
+
+                            request.setAttribute("aviso", "La anilla " + anilla + " no se encuentra en la base de datos");
+                            url = "JSP/aviso.jsp";
+                        } finally {
+                            
+                            if (conexion != null) {
+                                conexion.close();
+                            }
                         }
+                    } else {
+                        request.setAttribute("aviso", "Tienes que introducir una anilla");
+                        url = "JSP/aviso.jsp";
+                    }
+                    break;
+
+                case "Todas":
+                    try {
+                        sql = "SELECT * FROM aves";
+                        sentencia = conexion.createStatement();
+                        resultado = sentencia.executeQuery(sql);
+                        aves = new ArrayList<>();
+                        while (resultado.next()) {
+                            ave = new Ave();
+                            ave.setAnilla(resultado.getString(1));
+                            ave.setEspecie(resultado.getString(2));
+                            ave.setLugar(resultado.getString(3));
+                            ave.setFecha(resultado.getString(4));
+                            aves.add(ave);
+                        }
+                        request.setAttribute("aves", aves);
+                        url = "JSP/variosRegistros.jsp";
+
+                    } catch (SQLException e) {
+                        if (e.getErrorCode() == 1146) {
+                            request.setAttribute("error", "La tabla no existe");
+                        } else {
+                            request.setAttribute("error", "Ha ocurrido un error al acceder a la tabla");
+                        }
+                        url = "JSP/error.jsp";
+
+                    } finally {
+                        
                         if (conexion != null) {
                             conexion.close();
                         }
                     }
-                } else {
-                    request.setAttribute("aviso", "Tienes que introducir una anilla");
-                        url = "JSP/aviso.jsp";
-                }
-            } else if (request.getParameter("rand") != null) {
-                try {
-                    int numero = Integer.parseInt(anilla);
-                    if (numero > 0) {
-                        sql = "SELECT * FROM aves ORDER BY rand() LIMIT " + numero;
-                        try {
-                            sentencia = conexion.createStatement();
-                            resultado = sentencia.executeQuery(sql);
-                            aves = new ArrayList<>();
-                            while (resultado.next()) {
-                                ave = new Ave();
-                                ave.setAnilla(resultado.getString(1));
-                                ave.setEspecie(resultado.getString(2));
-                                ave.setLugar(resultado.getString(3));
-                                ave.setFecha(resultado.getString(4));
-                                aves.add(ave);
+                    break;
+
+                case "Algunas":
+                    try {
+                        int numero = Integer.parseInt(anilla);
+                        if (numero > 0) {
+                            sql = "SELECT * FROM aves ORDER BY rand() LIMIT " + numero;
+                            try {
+                                sentencia = conexion.createStatement();
+                                resultado = sentencia.executeQuery(sql);
+                                aves = new ArrayList<>();
+                                while (resultado.next()) {
+                                    ave = new Ave();
+                                    ave.setAnilla(resultado.getString(1));
+                                    ave.setEspecie(resultado.getString(2));
+                                    ave.setLugar(resultado.getString(3));
+                                    ave.setFecha(resultado.getString(4));
+                                    aves.add(ave);
+                                }
+                                request.setAttribute("aves", aves);
+                                url = "JSP/variosRegistros.jsp";
+                            } catch (SQLException e) {
+                                request.setAttribute("error", "Ha ocurrido un error al acceder a la tabla");
+                                url = "JSP/error.jsp";
                             }
-                            request.setAttribute("aves", aves);
-                            url = "JSP/variosRegistros.jsp";
-                        } catch (SQLException e) {
-                            request.setAttribute("error", "Ha ocurrido un error al acceder a la tabla");
-                            url = "JSP/error.jsp";
+                        } else {
+                            request.setAttribute("aviso", "El número tiene que ser mayor que 0");
+                            url = "JSP/aviso.jsp";
                         }
-                    } else {
-                        request.setAttribute("aviso", "El número tiene que ser mayor que 0");
+
+                    } catch (NumberFormatException e) {
+                        request.setAttribute("aviso", "Tienes que introducir un número válido");
                         url = "JSP/aviso.jsp";
+                    } finally {
+                        
+                        if (conexion != null) {
+                            conexion.close();
+                        }
                     }
-
-                } catch (NumberFormatException e) {
-                    request.setAttribute("aviso", "Tienes que introducir un número válido");
-                    url = "JSP/aviso.jsp";
-                } finally {
-                    if (resultado != null) {
-                        resultado.close();
-                    }
-                    if (conexion != null) {
-                        conexion.close();
-                    }
-                }
-
-            } else {
-                try {
-                    sql = "SELECT * FROM aves";
-                    sentencia = conexion.createStatement();
-                    resultado = sentencia.executeQuery(sql);
-                    aves = new ArrayList<>();
-                    while (resultado.next()) {
-                        ave = new Ave();
-                        ave.setAnilla(resultado.getString(1));
-                        ave.setEspecie(resultado.getString(2));
-                        ave.setLugar(resultado.getString(3));
-                        ave.setFecha(resultado.getString(4));
-                        aves.add(ave);
-                    }
-                    request.setAttribute("aves", aves);
-                    url = "JSP/variosRegistros.jsp";
-
-                } catch (SQLException e) {
-                    if(e.getErrorCode()==1146) {
-                        request.setAttribute("error", "La tabla no existe");
-                    } else {
-                        request.setAttribute("error", "Ha ocurrido un error al acceder a la tabla");
-                    }
-                    url = "JSP/error.jsp";
-
-                } finally {
-                    if (resultado != null) {
-                        resultado.close();
-                    }
-                    if (conexion != null) {
-                        conexion.close();
-                    }
-                }
-
+                    break;
             }
 
         } catch (SQLException e) {
