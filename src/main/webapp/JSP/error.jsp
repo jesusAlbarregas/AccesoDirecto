@@ -1,9 +1,3 @@
-<%-- 
-    Document   : error
-    Created on : 26-oct-2017, 16:24:26
-    Author     : Jesus
---%>
-
 <jsp:directive.page contentType="text/html" pageEncoding="UTF-8"/>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
@@ -11,14 +5,14 @@
     <head>
         <title>Aviso</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <jsp:include page="../INC/metas.inc"/>
+        <jsp:include page="/INC/metas.inc"/>
         <title>Error</title>
         <link rel="stylesheet" type="text/css" href="${estilo}" />
     </head>
     <body>
         <div id="principal">
             <h2 class="error">${error}</h2>
-            <p class="volver"><a href="${contexto}/AccesoBD">Volver</a></p>
+            <p class="volver"><a href="${contexto}/FrontController">Volver</a></p>
         </div>
     </body>
 </html>

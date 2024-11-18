@@ -18,7 +18,7 @@
     <body>
         <div id="principal">
             <h2 class="aviso">${aviso}</h2>
-            <p class="volver"><a href="${contexto}/AccesoBD">Volver</a></p>
+            <p class="volver"><a href="${contexto}/FrontController">Volver</a></p>
         </div>
     </body>
 </html>

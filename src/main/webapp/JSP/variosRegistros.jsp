@@ -36,7 +36,7 @@
             </c:forEach>
                 
             </table>
-            <p class="volver"><a href="${contexto}/AccesoBD">Volver</a></p>
+            <p class="volver"><a href="${contexto}/FrontController">Volver</a></p>
         </div>
     </body>
 </html>

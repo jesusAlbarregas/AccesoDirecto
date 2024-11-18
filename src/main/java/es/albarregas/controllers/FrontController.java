@@ -28,8 +28,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Jesus
  */
-@WebServlet(name = "AccesoBD", urlPatterns = {"/AccesoBD"})
-public class AccesoBD extends HttpServlet {
+@WebServlet(name = "AccesoBD", urlPatterns = {"/FrontController"})
+public class FrontController extends HttpServlet {
 
     @Override
     public void init(ServletConfig config) {
@@ -76,7 +76,7 @@ public class AccesoBD extends HttpServlet {
             List<Ave> aves = null;
 
             String cadenaConexion = "jdbc:mysql://localhost:3306/pruebasJAVA";
-            conexion = DriverManager.getConnection(cadenaConexion, "java2023", "2023");
+            conexion = DriverManager.getConnection(cadenaConexion, "java2025", "Java*2025");
             String anilla = request.getParameter("anilla");
 
             String sql = null;
@@ -189,7 +189,6 @@ public class AccesoBD extends HttpServlet {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
             request.setAttribute("error", "Ha ocurrido un error al acceder a la base de datos");
             url = "JSP/error.jsp";
 
